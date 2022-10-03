@@ -1,10 +1,19 @@
 select t1.*,
-    CASE WHEN   pct_receita <= 0.5 AND pct_freq <= 0.5 then "BAIXO VALOR"
-    WHEN        pct_receita > 0.5  AND pct_freq <= 0.5 then "ALTO VALOR"
-    WHEN        pct_receita <= 0.5 AND pct_freq > 0.5  then "ALTA FREQ"
-    WHEN        pct_receita < 0.9  OR  pct_freq < 0.9  then "PRODUTIVO"
-    ELSE        "SUPER PRODUTIVO"
-    END AS semento_valor_freq
+    CASE 
+        WHEN   pct_receita <= 0.5 AND pct_freq <= 0.5 then "BAIXO V. BAIXO F."
+        WHEN   pct_receita > 0.5  AND pct_freq <= 0.5 then "ALTO VALOR"
+        WHEN   pct_receita <= 0.5 AND pct_freq > 0.5  then "ALTA FREQ"
+        WHEN   pct_receita < 0.9  OR  pct_freq < 0.9  then "PRODUTIVO"
+        ELSE       "SUPER PRODUTIVO"
+    END AS semento_valor_freq,
+
+    CASE
+        WHEN qtde_dias_base <= 60  THEN "INICIO"
+        WHEN qtde_dias_base >= 300 THEN "RETENCAO"
+    END AS segmento_vida,
+
+    '2018-06-01' as dt_sgmt
+
 from
 (
     select t1.*,
@@ -43,6 +52,6 @@ from
         group by t2.seller_id
     ) as t1
 ) as t1
-
+WHERE t1.seller_id is not NULL 
 
 
